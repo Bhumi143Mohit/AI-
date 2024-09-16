@@ -1,0 +1,73 @@
+import heapq
+
+class Graph:
+    def __init__(self, graph, heuristic):
+        self.graph = graph  # Dictionary representing the graph (adjacency list)
+        self.heuristic = heuristic  # Dictionary with heuristic values
+
+    def best_first_search(self, start, goal):
+        # Priority queue to store frontier nodes (heapq for the min-heap)
+        frontier = []
+        heapq.heappush(frontier, (self.heuristic[start], start))
+        
+        # Visited set to track visited nodes
+        visited = set()
+        
+        # Dictionary to track the path
+        path = []
+        
+        while frontier:
+            # Get the node with the smallest heuristic value (best node)
+            _, current_node = heapq.heappop(frontier)
+            
+            if current_node in visited:
+                continue
+            
+            # Add to path
+            path.append(current_node)
+            visited.add(current_node)
+            
+            # If we reached the goal, return the path
+            if current_node == goal:
+                return path
+            
+            # Explore the neighbors
+            for neighbor in self.graph[current_node]:
+                if neighbor not in visited:
+                    heapq.heappush(frontier, (self.heuristic[neighbor], neighbor))
+        
+        # If no path is found
+        return None
+
+# Example graph (adjacency list)
+graph = {
+    'A': ['B', 'C'],
+    'B': ['D', 'E'],
+    'C': ['F', 'G'],
+    'D': [],
+    'E': [],
+    'F': [],
+    'G': []
+}
+
+# Example heuristic values (for Best-First Search)
+heuristic = {
+    'A': 6,
+    'B': 4,
+    'C': 4,
+    'D': 2,
+    'E': 6,
+    'F': 3,
+    'G': 1
+}
+
+# Creating the graph object
+g = Graph(graph, heuristic)
+
+# Running Best-First Search from 'A' to 'G'
+result = g.best_first_search('A', 'G')
+
+if result:
+    print("Path found:", result)
+else:
+    print("No path found")
