@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Struct to represent the state of the game
+typedef struct {
+    int missionaries;
+    int cannibals;
+    int boat; // 1 if the boat is on the starting side, 0 if on the other side
+} State;
+
+void printState(State s) {
+    printf("Missionaries: %d, Cannibals: %d, Boat: %s\n", s.missionaries, s.cannibals, s.boat ? "Starting side" : "Other side");
+}
+
+// Check if the current state is valid
+int isValidState(State s) {
+    // Number of missionaries and cannibals should be between 0 and 3
+    if (s.missionaries < 0 || s.cannibals < 0 || s.missionaries > 3 || s.cannibals > 3) {
+        return 0;
+    }
+    // Missionaries should not be outnumbered by cannibals on either side
+    if ((s.missionaries > 0 && s.missionaries < s.cannibals) || 
+        ((3 - s.missionaries) > 0 && (3 - s.missionaries) < (3 - s.cannibals))) {
+        return 0;
+    }
+    return 1;
+}
+
+// Check if the current state is the goal state
+int isGoalState(State s) {
+    return (s.missionaries == 0 && s.cannibals == 0 && s.boat == 0);
+}
+
+// Recursive DFS function to solve the problem
+int solve(State current, State previous) {
+    if (!isValidState(current)) {
+        return 0;
+    }
+    
+    printState(current);
+    
+    if (isGoalState(current)) {
+        printf("Goal state reached!\n");
+        return 1;
+    }
+    
+    // Try all possible moves
+    State next;
+    
+    // Move two missionaries
+    if (current.boat) {
+        next = (State){current.missionaries - 2, current.cannibals, 0};
+    } else {
+        next = (State){current.missionaries + 2, current.cannibals, 1};
+    }
+    if (solve(next, current)) return 1;
+    
+    // Move two cannibals
+    if (current.boat) {
+        next = (State){current.missionaries, current.cannibals - 2, 0};
+    } else {
+        next = (State){current.missionaries, current.cannibals + 2, 1};
+    }
+    if (solve(next, current)) return 1;
+
+    // Move one missionary and one cannibal
+    if (current.boat) {
+        next = (State){current.missionaries - 1, current.cannibals - 1, 0};
+    } else {
+        next = (State){current.missionaries + 1, current.cannibals + 1, 1};
+    }
+    if (solve(next, current)) return 1;
+    
+    // Move one missionary
+    if (current.boat) {
+        next = (State){current.missionaries - 1, current.cannibals, 0};
+    } else {
+        next = (State){current.missionaries + 1, current.cannibals, 1};
+    }
+    if (solve(next, current)) return 1;
+
+    // Move one cannibal
+    if (current.boat) {
+        next = (State){current.missionaries, current.cannibals - 1, 0};
+    } else {
+        next = (State){current.missionaries, current.cannibals + 1, 1};
+    }
+    if (solve(next, current)) return 1;
+
+    return 0;
+}
+
+int main() {
+    State initial = {3, 3, 1};
+    State previous = {-1, -1, -1}; // Placeholder for tracking the previous state
+
+    if (!solve(initial, previous)) {
+        printf("No solution found.\n");
+    }
+
+    return 0;
+}
