@@ -1,0 +1,31 @@
+# Depth First Search in a Graph
+
+def dfs(graph, start, visited=None):
+    if visited is None:
+        visited = set()  # To keep track of visited nodes
+    
+    # Mark the current node as visited
+    visited.add(start)
+    
+    # Print the current node (or process it in any way needed)
+    print(start, end=" ")
+
+    # Recur for all the vertices adjacent to the current node
+    for neighbor in graph[start]:
+        if neighbor not in visited:
+            dfs(graph, neighbor, visited)
+
+# Example usage
+if __name__ == "__main__":
+    # Example graph represented as an adjacency list
+    graph = {
+        'A': ['B', 'C'],
+        'B': ['D', 'E'],
+        'C': ['F'],
+        'D': [],
+        'E': ['F'],
+        'F': []
+    }
+
+    print("Depth First Search traversal starting from node 'A':")
+    dfs(graph, 'A')
