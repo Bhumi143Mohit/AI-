@@ -1,0 +1,16 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Function to generate random cities
+def generate_cities(n_cities, x_lim=10, y_lim=10):
+    return np.random.rand(n_cities, 2) * [x_lim, y_lim]
+
+# Euclidean distance function
+def euclidean_distance(a, b):
+    return np.linalg.norm(a - b)
+
+# Function to update the neurons
+def update_neurons(neurons, winner_idx, city, eta, sigma, iteration):
+    for i in range(len(neurons)):
+        dist = min(abs(i - winner_idx), len(neurons) - abs(i - winner_idx))
+        influence = np.exp(-(dist ** 2
