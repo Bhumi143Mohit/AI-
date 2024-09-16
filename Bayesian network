@@ -1,0 +1,23 @@
+# Import required libraries
+import pandas as pd
+from pgmpy.models import BayesianNetwork
+from pgmpy.estimators import MaximumLikelihoodEstimator, BayesianEstimator
+from pgmpy.inference import VariableElimination
+
+# Sample data for the Bayesian Network
+data = pd.DataFrame(data={'Rain': [0, 0, 1, 0, 0, 1, 1, 1, 0, 1],
+                          'Sprinkler': [0, 1, 0, 1, 1, 0, 0, 0, 1, 0],
+                          'Grass Wet': [0, 1, 1, 1, 1, 1, 1, 1, 0, 1]})
+
+# Define the structure of the Bayesian Network
+model = BayesianNetwork([('Rain', 'Grass Wet'), ('Sprinkler', 'Grass Wet')])
+
+# Fit the model to the data using Maximum Likelihood Estimation (MLE)
+model.fit(data, estimator=MaximumLikelihoodEstimator)
+
+# Perform inference on the Bayesian Network
+inference = VariableElimination(model)
+
+# Query the network to get the probability of Grass Wet given Rain is True
+result = inference.query(variables=['Grass Wet'], evidence={'Rain': 1})
+print(result)
