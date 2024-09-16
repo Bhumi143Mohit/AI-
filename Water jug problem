@@ -1,0 +1,45 @@
+from collections import deque
+
+def water_jug_problem(capacity_a, capacity_b, target):
+    visited = set()  # To track visited states
+    queue = deque([(0, 0)])  # Initial state (0, 0) for both jugs
+    path = []  # To store the sequence of steps
+
+    while queue:
+        state = queue.popleft()
+        x, y = state
+        
+        # If the target is reached
+        if x == target or y == target:
+            path.append(state)
+            return path
+
+        # Skip already visited states
+        if state in visited:
+            continue
+        
+        visited.add(state)
+        path.append(state)
+
+        # Possible actions (production rules)
+        next_states = [
+            (capacity_a, y),  # Fill Jug A
+            (x, capacity_b),  # Fill Jug B
+            (0, y),           # Empty Jug A
+            (x, 0),           # Empty Jug B
+            (max(0, x - (capacity_b - y)), min(capacity_b, x + y)),  # Pour A -> B
+            (min(capacity_a, x + y), max(0, y - (capacity_a - x)))   # Pour B -> A
+        ]
+
+        for next_state in next_states:
+            if next_state not in visited:
+                queue.append(next_state)
+
+    return "No solution"
+
+# Example usage
+capacity_a = 4
+capacity_b = 3
+target = 2
+solution = water_jug_problem(capacity_a, capacity_b, target)
+print("Steps to solve the problem:", solution)
